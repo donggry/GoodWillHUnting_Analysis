@@ -1,0 +1,67 @@
+SELECT TimestampDiff(minute,D.createdDate,D.lastLoginDate),count(*) FROM DeviceView D,UserView U where D.userId=U.UserId and Timestampdiff(day,D.createdDate,D.lastloginDate)<=0 group by TIMESTAMPDIFF(minute,D.createdDate,D.lastLoginDate);
+
+
+
+select relationId, U.gender, TU.gender,U.age, TU.age,U.age-TU.age as agegrade, U.countryCode, TU.countryCode,TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate) as Timegrade, U.fallingStartDate, TU.fallingStartDate, U.invitedDateByTarget, TU.invitedDateByTarget, U.facebookFriendsCount, TU.facebookFriendsCount, U.emotionId, TU.emotionId, matchDate, inviteCheck, countMind, hintCheckStatus, foundCheckStatus  from (select M.foundCheck foundCheckStatus, M.hintCheck hintCheckStatus, R.mainUserId mainUserId,R.matchDate, R.inviteCheck, R.relId relationId, R.targetUserId, COUNT(M.mindId) countMind,R.matchCheck relMatchStatus from RelationView R LEFT OUTER JOIN MindView M ON R.relId=M.relId group by R.relId) as gbByMindCount JOIN UserView as U on gbByMindCount.mainUserId=U.userId JOIN UserView as TU ON TU.userId=gbByMindCount.targetUserId where gbByMindCount.relMatchStatus=1;
+gbByMindCount.relMatchStatus
+
+
+select relationId,gbByMindCount.relMatchStatus, U.gender, TU.gender,U.age, TU.age,U.age-TU.age as agegrade=case when , U.countryCode, TU.countryCode,TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate) as Timegrade, U.fallingStartDate, TU.fallingStartDate, U.invitedDateByTarget, TU.invitedDateByTarget, U.facebookFriendsCount, TU.facebookFriendsCount, U.emotionId, TU.emotionId, matchDate, inviteCheck, countMind, hintCheckStatus, foundCheckStatus  from (select M.foundCheck foundCheckStatus, M.hintCheck hintCheckStatus, R.mainUserId mainUserId,R.matchDate, R.inviteCheck, R.relId relationId, R.targetUserId, COUNT(M.mindId) countMind,R.matchCheck relMatchStatus from RelationView R LEFT OUTER JOIN MindView M ON R.relId=M.relId group by R.relId) as gbByMindCount JOIN UserView as U on gbByMindCount.mainUserId=U.userId JOIN UserView as TU ON TU.userId=gbByMindCount.targetUserId;
+
+
+
+#"SELECT TimestampDiff(hour,D.createdDate,D.lastLoginDate),count(*) FROM DeviceView D,UserView U where D.userId=U.UserId and Timestampdiff(day,D.createdDate,D.lastloginDate)<=0 group by TIMESTAMPDIFF(HOUR,D.createdDate,D.lastLoginDate)")
+
+#"SELECT TIMESTAMPDIFF(DAY,D.createdDate,D.lastLoginDate),count(*) as users  FROM DeviceView D,UserView U where D.userId=U.UserId group by (TIMESTAMPDIFF(DAY, D.createdDate,D.lastLoginDate))")
+#"select M.message from UserView U, MindView M where M.userId=U.userId and gender=0")
+#select U.age,U.gender,M.address,M.savedDate,M.foundCheck,M.FoundDate,M.hintCheck,R.matchCheck,R.matchDate from MindView M,UserView U, RelationView R where U.userId=M.userId and U.userId=R.mainUserId")
+
+
+#query.result<-dbSendQuery(con,"select message from MindView")
+#query.result<-dbSendQuery(con,"select M.message from UserView U, MindView M where M.userId=U.userId and U.gender=1")
+#test.table <- fetch(query.result,n=-1)
+#write.table(test.table,"mydata.txt",row.names=F)
+#select U.age,U.gender,M.message,count(*) as messagecount, M.address,M.savedDate,M.foundCheck,M.FoundDate,M.hintCheck,R.matchCheck,R.matchDate from MindView M,UserView U, RelationView R where U.userId=M.userId and U.userId=R.mainUserId group by M.userId LIMIT 20;
+
+
+
+
+CASE When A.age-B.age>0 and A.age-B.age<=5 Then '1' When A.age-B.age<0 and A.age-B.age>=-5 then '-1'
+When A.age-B.age>5 and A.age-B.age<=10 Then '2' When A.age-B.age>10 then '3'
+When A.age-B.age>=-10 and A.age-B.age<-5 then '-2' When A.age-B.age<-10 then '-3' 
+When A.age-B.age=0 Then '0' END as agegrade,
+
+
+
+
+select relationId,gbByMindCount.relMatchStatus, U.gender, TU.gender,U.age, TU.age,
+CASE When U.age-TU.age>0 and U.age-TU.age<=5 Then '1' When U.age-TU.age<0 and U.age-TU.age>=-5 then '-1'
+When U.age-TU.age>5 and U.age-TU.age<=10 Then '2' When U.age-TU.age>10 then '3'
+When U.age-TU.age>=-10 and U.age-TU.age<-5 then '-2' When U.age-TU.age<-10 then '-3' 
+When U.age-TU.age=0 Then '0' END as agegrade, U.countryCode, TU.countryCode,CASE When TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)<=10 and TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)>0 Then '0' When TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)>60 and TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)<=1440 Then '1'ELSE '2' END as Timegrade, 
+U.fallingStartDate, TU.fallingStartDate, U.invitedDateByTarget, TU.invitedDateByTarget, U.facebookFriendsCount, TU.facebookFriendsCount, U.emotionId, TU.emotionId, matchDate, inviteCheck,
+ countMind, hintCheckStatus, foundCheckStatus  from (select M.foundCheck foundCheckStatus, M.hintCheck hintCheckStatus, R.mainUserId mainUserId,R.matchDate, R.inviteCheck, R.relId relationId,
+ R.targetUserId, COUNT(M.mindId) countMind,R.matchCheck relMatchStatus from RelationView R LEFT OUTER JOIN MindView M ON R.relId=M.relId group by R.relId) as gbByMindCount JOIN UserView as U on gbByMindCount.mainUserId=U.userId JOIN UserView as TU ON TU.userId=gbByMindCount.targetUserId where U.age is not NULL and TU.age is not NULL;
+
+
+TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate) as Timegrade
+CASE When TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate)=0 Then '0' When TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate)=1 or TimestampDiff(hour,U.fallingStartDate,TU.fallingStartDate)=-1 Then '1'ELSE '2' END as Timegrade
+
+
+select A.age,B.age, CASE When A.age-B.age>0 and A.age-B.age<=5 Then '1' When A.age-B.age<0 and A.age-B.age>=-5 then '-1'
+When A.age-B.age>5 and A.age-B.age<=10 Then '2' When A.age-B.age>10 then '3'
+When A.age-B.age>=-10 and A.age-B.age<-5 then '-2' When A.age-B.age<-10 then '-3' 
+When A.age-B.age=0 Then '0' END as agegrade, A.fallingStartDate,B.fallingStartDate
+from UserView A,UserView B,RelationView 
+where A.userId=RelationView.mainUserId and B.userId=RelationView.targetUserId and B.age is not NULL and A.age is not NULL;
+
+CASE When COUNT(M.mindId)=0 Then '0' When COUNT(M.mindId)=1 Then '1' When COUNT(M.mindId)>1 Then '2' as countmind END
+
+select relationId,gbByMindCount.relMatchStatus, U.gender, TU.gender,U.age, TU.age,
+CASE When U.age-TU.age>0 and U.age-TU.age<=5 Then '1' When U.age-TU.age<0 and U.age-TU.age>=-5 then '-1'
+When U.age-TU.age>5 and U.age-TU.age<=10 Then '2' When U.age-TU.age>10 then '3'
+When U.age-TU.age>=-10 and U.age-TU.age<-5 then '-2' When U.age-TU.age<-10 then '-3' 
+When U.age-TU.age=0 Then '0' END as agegrade, U.countryCode, TU.countryCode,CASE When TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)<=10 and TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)>0 Then '0' When TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)>60 and TimestampDiff(minute,U.fallingStartDate,TU.fallingStartDate)<=1440 Then '1'ELSE '2' END as Timegrade, 
+U.fallingStartDate, TU.fallingStartDate, U.invitedDateByTarget, TU.invitedDateByTarget, U.facebookFriendsCount, TU.facebookFriendsCount, U.emotionId, TU.emotionId, matchDate, inviteCheck,
+CASE When countmind=0 Then '0' When countmind=1 Then '1' ELSE '2' END as countmind2, hintCheckStatus, foundCheckStatus  from (select M.foundCheck foundCheckStatus, M.hintCheck hintCheckStatus, R.mainUserId mainUserId,R.matchDate, R.inviteCheck, R.relId relationId,
+ R.targetUserId,COUNT(M.mindId) countMind ,R.matchCheck relMatchStatus from RelationView R LEFT OUTER JOIN MindView M ON R.relId=M.relId group by R.relId) as gbByMindCount JOIN UserView as U on gbByMindCount.mainUserId=U.userId JOIN UserView as TU ON TU.userId=gbByMindCount.targetUserId where U.age is not NULL and TU.age is not NULL;
